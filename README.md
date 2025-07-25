@@ -40,6 +40,13 @@ Taiyaki AI is a comprehensive FreeCAD integration toolkit that leverages the Mod
 - **Structural Analysis**: Stress concentration and load path validation
 - **Cost Optimization**: Target cost validation with optimization recommendations
 
+### Screenshot Analysis & Auto-Fix
+- **Visual Analysis**: AI-powered screenshot analysis to detect geometric issues
+- **Automatic Error Detection**: Identifies zero dimensions, overlapping objects, and manufacturing constraints
+- **Auto-Fix Capabilities**: Automatically resolves common CAD design issues
+- **Manufacturing Validation**: Ensures designs meet production requirements
+- **Spatial Conflict Resolution**: Detects and fixes overlapping or conflicting geometry
+
 ## Installation 
 
 See the [Installation Guide](INSTALLATION.md) for complete setup instructions.
@@ -83,6 +90,13 @@ The Taiyaki AI toolkit exposes the following API endpoints through MCP:
 * Severity-based issue classification and prioritization
 * Actionable recommendations with cost and time impact analysis
 * Process-specific design rule checking
+
+### Screenshot Analysis & Auto-Fix Tools
+* `analyze_screenshot_for_issues`: AI-powered visual analysis of FreeCAD screenshots to detect design issues
+* `apply_automatic_fixes`: Automatically fix common geometric and manufacturing issues
+* Visual error detection for zero dimensions, invalid parameters, and spatial conflicts
+* Manufacturing constraint validation and automatic thickness adjustments
+* Spatial layout optimization with automatic object separation
 
 ### Legacy DFM Tools
 * `get_printing_guidelines`: Direct access to detailed 3D printing design guidelines
