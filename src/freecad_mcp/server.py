@@ -60,15 +60,15 @@ class FreeCADConnection:
         return self.server.get_parts_list()
 
     def run_cnc_manufacturing_dfm_check(self, doc_name: str, params: Dict[str, float]) -> dict[str, Any]:
-        return self.server.run_cnc_manufacturing_dfm_check(doc_name, json.dumps(params))
+        return self.server.run_cnc_manufacturing_dfm_check(doc_name, json.dumps(params or {}))
         
     def run_3d_printing_dfm_check(self, doc_name: str, params: Dict[str, float]) -> dict[str, Any]:
-        return self.server.run_3d_printing_dfm_check(doc_name, json.dumps(params))
+        return self.server.run_3d_printing_dfm_check(doc_name, json.dumps(params or {}))
     
     def run_injection_molding_dfm_check(self, doc_name: str, params: Dict[str, float]) -> dict[str, Any]:
-        return self.server.run_injection_molding_dfm_check(doc_name, json.dumps(params))
+        return self.server.run_injection_molding_dfm_check(doc_name, json.dumps(params or {}))
     
-    def restore_colors_after_check(self, doc_name: str) -> dict[str: Any]:
+    def restore_colors_after_check(self, doc_name: str) -> dict[str, Any]:
         return self.server.restore_colors_after_check(doc_name)
 
 
@@ -1493,8 +1493,9 @@ def analyze_screenshot_for_issues(
                 if active_doc_result.get("success") and active_doc_result.get("message"):
                     doc_name = active_doc_result["message"].strip('"\'')
                     objects_data = freecad.get_objects(doc_name)
-            except:
-                pass
+            except Exception as e:
+                logger.warning(f"Could not get active document objects: {e}")
+
         
         # Analyze the screenshot and geometry
         analysis_results = {
@@ -1966,181 +1967,10 @@ def analyze_manufacturability_quick(
         return [TextContent(type="text", text=f"Manufacturability analysis failed: {e}")]
 
 
-@mcp.tool()
-def analyze_screenshot_for_issues(
-    ctx: Context,
-    doc_name: str,
-    view_name: str = "Isometric",
-    analysis_type: str = "geometry_errors"
-) -> List[TextContent]:
-    """
-    Analyze a FreeCAD screenshot to detect geometric issues, construction errors, and design problems.
-    
-    Args:
-        doc_name: FreeCAD document name to capture screenshot from
-        view_name: View angle (Isometric, Front, Top, Right, etc.)
-        analysis_type: Type of analysis (geometry_errors, manufacturability, spatial_layout)
-    
-    Returns:
-        Detailed analysis of detected issues with specific recommendations
-    """
-    logger.info(f"Analyzing screenshot for {doc_name} - {view_name} view")
-    
-    try:
-        freecad = get_freecad_connection()
-        
-        # Capture screenshot
-        screenshot_data = freecad.get_active_screenshot(view_name)
-        
-        if not screenshot_data:
-            return [TextContent(type="text", text="Failed to capture screenshot")]
-        
-        # Get document objects for context
-        objects_data = freecad.get_objects(doc_name)
-        
-        # Analyze based on type
-        issues = []
-        recommendations = []
-        
-        if analysis_type == "geometry_errors":
-            issues, recommendations = _analyze_geometry_errors(objects_data)
-        elif analysis_type == "manufacturability":
-            issues, recommendations = _analyze_manufacturing_issues(objects_data)
-        elif analysis_type == "spatial_layout":
-            issues, recommendations = _analyze_spatial_layout(objects_data)
-        else:
-            # Comprehensive analysis
-            geo_issues, geo_recs = _analyze_geometry_errors(objects_data)
-            mfg_issues, mfg_recs = _analyze_manufacturing_issues(objects_data)
-            spatial_issues, spatial_recs = _analyze_spatial_layout(objects_data)
-            
-            issues = geo_issues + mfg_issues + spatial_issues
-            recommendations = geo_recs + mfg_recs + spatial_recs
-        
-        # Generate comprehensive report
-        report = f"""# Screenshot Analysis Report: {doc_name}
-
-## View: {view_name}
-## Analysis Type: {analysis_type.replace('_', ' ').title()}
-## Objects Analyzed: {len(objects_data)}
-
-## Issues Detected ({len(issues)})
-"""
-        
-        if issues:
-            for i, issue in enumerate(issues, 1):
-                report += f"{i}. ⚠️ {issue}\n"
-        else:
-            report += "✅ No issues detected in current view\n"
-        
-        report += f"\n## Recommendations ({len(recommendations)})\n"
-        
-        if recommendations:
-            for i, rec in enumerate(recommendations, 1):
-                report += f"{i}. 🔧 {rec}\n"
-        else:
-            report += "✅ Design appears correct\n"
-        
-        report += "\n## Next Steps\n"
-        report += "- Use `apply_automatic_fixes` to resolve detected issues\n"
-        report += "- Capture different views to check all angles\n"
-        report += "- Run manufacturability analysis for production readiness\n"
-        
-        logger.info(f"Screenshot analysis complete: {len(issues)} issues found")
-        
-        return [TextContent(type="text", text=report)]
-        
-    except Exception as e:
-        logger.error(f"Screenshot analysis failed: {e}")
-        return [TextContent(type="text", text=f"Screenshot analysis failed: {e}")]
 
 
-@mcp.tool()
-def apply_automatic_fixes(
-    ctx: Context,
-    doc_name: str,
-    fix_type: str = "all",
-    preserve_original: bool = True
-) -> List[TextContent]:
-    """
-    Automatically fix common CAD design issues detected in the model.
-    
-    Args:
-        doc_name: FreeCAD document to fix
-        fix_type: Type of fixes (geometry, manufacturability, spatial, all)
-        preserve_original: Whether to backup original objects before fixing
-    
-    Returns:
-        Report of fixes applied
-    """
-    logger.info(f"Applying automatic fixes to {doc_name} - type: {fix_type}")
-    
-    try:
-        freecad = get_freecad_connection()
-        objects_data = freecad.get_objects(doc_name)
-        
-        fixes_applied = []
-        
-        # Backup originals if requested
-        if preserve_original:
-            backup_code = """
-# Backup original objects
-for obj in FreeCAD.ActiveDocument.Objects:
-    if hasattr(obj, 'Shape') and obj.Shape:
-        backup = FreeCAD.ActiveDocument.addObject('Part::Feature', f'{obj.Name}_backup')
-        backup.Shape = obj.Shape.copy()
-        backup.ViewObject.Visibility = False
-"""
-            freecad.execute_code(backup_code)
-            fixes_applied.append("Created backup of original objects")
-        
-        # Apply geometric fixes
-        if fix_type in ["geometry", "all"]:
-            geo_fixes = _apply_geometry_fixes(freecad, doc_name, objects_data)
-            fixes_applied.extend(geo_fixes)
-        
-        # Apply manufacturability fixes
-        if fix_type in ["manufacturability", "all"]:
-            mfg_fixes = _apply_manufacturability_fixes(freecad, doc_name, objects_data)
-            fixes_applied.extend(mfg_fixes)
-        
-        # Apply spatial layout fixes
-        if fix_type in ["spatial", "all"]:
-            spatial_fixes = _apply_spatial_fixes(freecad, doc_name, objects_data)
-            fixes_applied.extend(spatial_fixes)
-        
-        # Recompute document
-        freecad.execute_code("FreeCAD.ActiveDocument.recompute()")
-        
-        # Generate report
-        report = f"""# Automatic Fixes Applied: {doc_name}
 
-## Fix Type: {fix_type.title()}
-## Total Fixes: {len(fixes_applied)}
 
-## Changes Made\n"""
-        
-        if fixes_applied:
-            for i, fix in enumerate(fixes_applied, 1):
-                report += f"{i}. ✅ {fix}\n"
-        else:
-            report += "ℹ️ No fixes were needed\n"
-        
-        report += "\n## Verification\n"
-        report += "- Document has been recomputed\n"
-        report += "- Take a new screenshot to verify fixes\n"
-        report += "- Run manufacturability analysis to confirm improvements\n"
-        
-        if preserve_original:
-            report += "- Original objects preserved with '_backup' suffix\n"
-        
-        logger.info(f"Automatic fixes complete: {len(fixes_applied)} fixes applied")
-        
-        return [TextContent(type="text", text=report)]
-        
-    except Exception as e:
-        logger.error(f"Automatic fixes failed: {e}")
-        return [TextContent(type="text", text=f"Automatic fixes failed: {e}")]
 
 
 def _analyze_geometry_errors(objects_data):
@@ -2170,11 +2000,23 @@ def _analyze_geometry_errors(objects_data):
                 issues.append(f"{obj_name}: Invalid cylinder parameters")
                 recommendations.append(f"Set positive radius and height for {obj_name}")
         
-        # Check for overlapping identical objects
-        placement = obj.get("Placement", {})
-        if placement:
-            # Simple overlap detection based on identical placements
-            pass  # Could be enhanced with actual overlap calculation
+        elif "Sphere" in obj_type:
+            radius = obj.get("Radius", 0)
+            if radius <= 0:
+                issues.append(f"{obj_name}: Invalid sphere radius")
+                recommendations.append(f"Set positive radius for {obj_name}")
+        
+        elif "Cone" in obj_type:
+            radius1 = obj.get("Radius1", 0)
+            radius2 = obj.get("Radius2", 0)
+            height = obj.get("Height", 0)
+            
+            if radius1 <= 0 and radius2 <= 0:
+                issues.append(f"{obj_name}: Invalid cone radii")
+                recommendations.append(f"Set positive radius for {obj_name}")
+            if height <= 0:
+                issues.append(f"{obj_name}: Invalid cone height")
+                recommendations.append(f"Set positive height for {obj_name}")
     
     return issues, recommendations
 
@@ -2194,21 +2036,35 @@ def _analyze_manufacturing_issues(objects_data):
             width = obj.get("Width", 0)
             height = obj.get("Height", 0)
             
-            min_dimension = min([d for d in [length, width, height] if d > 0] or [0])
+            dimensions = [d for d in [length, width, height] if d > 0]
+            if not dimensions:
+                continue
+                
+            min_dimension = min(dimensions)
+            max_dimension = max(dimensions)
             
             if 0 < min_dimension < 1.0:  # Less than 1mm
                 issues.append(f"{obj_name}: Very thin features may be difficult to machine")
                 recommendations.append(f"Increase minimum thickness of {obj_name} to >1mm")
             
             # Check aspect ratios
-            max_dimension = max([d for d in [length, width, height] if d > 0] or [0])
             if min_dimension > 0 and max_dimension / min_dimension > 10:
                 issues.append(f"{obj_name}: High aspect ratio may cause deflection")
                 recommendations.append(f"Add support ribs to {obj_name} or reduce aspect ratio")
         
-        # Check for sharp internal corners
-        # This would require more detailed geometry analysis in real implementation
-        
+        elif "Cylinder" in obj_type:
+            radius = obj.get("Radius", 0)
+            height = obj.get("Height", 0)
+            
+            if radius > 0 and height > 0:
+                if radius < 0.5:  # Very small radius
+                    issues.append(f"{obj_name}: Small radius may be difficult to machine")
+                    recommendations.append(f"Increase radius of {obj_name} for better machinability")
+                
+                if height / radius > 20:  # Very long cylinder
+                    issues.append(f"{obj_name}: High length-to-diameter ratio may cause deflection")
+                    recommendations.append(f"Add support or reduce length of {obj_name}")
+    
     return issues, recommendations
 
 
@@ -2231,9 +2087,6 @@ def _analyze_spatial_layout(objects_data):
                 recommendations.append(f"Separate {obj_name} and {placements[pos_key]} spatially")
             else:
                 placements[pos_key] = obj_name
-    
-    # Check for objects too close together
-    # This would require actual distance calculations in real implementation
     
     return issues, recommendations
 
@@ -2279,6 +2132,46 @@ if obj:
 """
                 freecad.execute_code(fix_code)
                 fixes.append(f"Fixed invalid parameters in {obj_name}")
+        
+        # Fix invalid spheres
+        elif "Sphere" in obj_type:
+            radius = obj.get("Radius", 0)
+            if radius <= 0:
+                fix_code = f"""
+# Fix invalid sphere {obj_name}
+obj = FreeCAD.ActiveDocument.getObject('{obj_name}')
+if obj:
+    if obj.Radius <= 0: obj.Radius = 5.0
+"""
+                freecad.execute_code(fix_code)
+                fixes.append(f"Fixed invalid radius in {obj_name}")
+        
+        # Fix invalid cones
+        elif "Cone" in obj_type:
+            radius1 = obj.get("Radius1", 0)
+            radius2 = obj.get("Radius2", 0)
+            height = obj.get("Height", 0)
+            
+            if radius1 <= 0 and radius2 <= 0:
+                fix_code = f"""
+# Fix invalid cone {obj_name}
+obj = FreeCAD.ActiveDocument.getObject('{obj_name}')
+if obj:
+    if obj.Radius1 <= 0: obj.Radius1 = 5.0
+    if obj.Radius2 <= 0: obj.Radius2 = 2.0
+"""
+                freecad.execute_code(fix_code)
+                fixes.append(f"Fixed invalid cone radii in {obj_name}")
+            
+            if height <= 0:
+                fix_code = f"""
+# Fix invalid cone height {obj_name}
+obj = FreeCAD.ActiveDocument.getObject('{obj_name}')
+if obj:
+    if obj.Height <= 0: obj.Height = 10.0
+"""
+                freecad.execute_code(fix_code)
+                fixes.append(f"Fixed invalid height in {obj_name}")
     
     return fixes
 
@@ -2318,6 +2211,20 @@ if obj and obj.Width < {min_thickness}:
 """
                 freecad.execute_code(fix_code)
                 fixes.append(f"Increased width of {obj_name} to {min_thickness}mm")
+        
+        elif "Cylinder" in obj_type:
+            radius = obj.get("Radius", 0)
+            min_radius = 0.5  # Minimum machinable radius
+            
+            if 0 < radius < min_radius:
+                fix_code = f"""
+# Increase radius of {obj_name}
+obj = FreeCAD.ActiveDocument.getObject('{obj_name}')
+if obj and obj.Radius < {min_radius}:
+    obj.Radius = {min_radius}
+"""
+                freecad.execute_code(fix_code)
+                fixes.append(f"Increased radius of {obj_name} to {min_radius}mm")
     
     return fixes
 

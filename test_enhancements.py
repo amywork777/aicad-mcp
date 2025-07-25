@@ -49,6 +49,20 @@ def test_screenshot_analysis():
             "Placement": {"Base": {"x": 60, "y": 0, "z": 0}}
         },
         {
+            "Name": "InvalidSphere",
+            "TypeId": "Part::Sphere",
+            "Radius": 0.0,  # Invalid zero radius
+            "Placement": {"Base": {"x": 80, "y": 0, "z": 0}}
+        },
+        {
+            "Name": "InvalidCone",
+            "TypeId": "Part::Cone",
+            "Radius1": -2.0,  # Invalid negative radius
+            "Radius2": 0.0,   # Invalid zero radius
+            "Height": -5.0,   # Invalid negative height
+            "Placement": {"Base": {"x": 100, "y": 0, "z": 0}}
+        },
+        {
             "Name": "OverlappingBox",
             "TypeId": "Part::Box",
             "Length": 10.0,
@@ -111,6 +125,8 @@ def test_screenshot_analysis():
         "thin features", 
         "high aspect ratio",
         "invalid cylinder",
+        "invalid sphere",
+        "invalid cone",
         "overlapping objects"
     ]
     
@@ -172,6 +188,24 @@ def test_fix_functions():
             "TypeId": "Part::Cylinder", 
             "Radius": 0.0,
             "Height": 10.0
+        },
+        {
+            "Name": "SmallCyl",
+            "TypeId": "Part::Cylinder", 
+            "Radius": 0.2,  # Below minimum radius
+            "Height": 10.0
+        },
+        {
+            "Name": "InvalidSphere",
+            "TypeId": "Part::Sphere",
+            "Radius": -1.0
+        },
+        {
+            "Name": "InvalidCone",
+            "TypeId": "Part::Cone",
+            "Radius1": 0.0,
+            "Radius2": 0.0,
+            "Height": -5.0
         }
     ]
     
@@ -250,6 +284,11 @@ def main():
             print("\nNew tools ready for use:")
             print("  - analyze_screenshot_for_issues")
             print("  - apply_automatic_fixes")
+            print("\nSupported object types:")
+            print("  - Part::Box (boxes/cubes)")
+            print("  - Part::Cylinder (cylinders)")
+            print("  - Part::Sphere (spheres)")
+            print("  - Part::Cone (cones)")
             return True
         else:
             print("\n❌ Some tests failed. Check the output above for details.")
