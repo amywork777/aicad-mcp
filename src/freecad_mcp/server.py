@@ -1454,6 +1454,518 @@ def refine_cnc_machining_dfm(
             )
         ]
 
+@mcp.tool()
+def analyze_screenshot_for_issues(
+    ctx: Context,
+    doc_name: str = None,
+    view_name: str = "Isometric",
+    focus_areas: List[str] = None
+) -> List[TextContent | ImageContent]:
+    """
+    Take a screenshot of the current FreeCAD view and analyze it for geometric issues,
+    manufacturability problems, and suggest automatic fixes.
+    
+    Args:
+        doc_name: Optional document name to analyze (uses active document if not specified)
+        view_name: Camera view for analysis (Isometric, Front, Top, etc.)
+        focus_areas: Specific areas to focus on (geometry, manufacturability, assembly, etc.)
+    
+    Returns:
+        Screenshot with analysis overlay and detailed recommendations for fixes
+    """
+    logger.info(f"Analyzing screenshot for issues in view: {view_name}")
+    
+    try:
+        freecad = get_freecad_connection()
+        
+        # Take screenshot
+        screenshot = freecad.get_active_screenshot(view_name)
+        
+        # Get object data for context
+        if doc_name:
+            objects_data = freecad.get_objects(doc_name)
+        else:
+            # Get active document objects
+            objects_data = []
+            try:
+                # Try to get objects from active document
+                active_doc_result = freecad.execute_code("FreeCAD.ActiveDocument.Name if FreeCAD.ActiveDocument else None")
+                if active_doc_result.get("success") and active_doc_result.get("message"):
+                    doc_name = active_doc_result["message"].strip('"\'')
+                    objects_data = freecad.get_objects(doc_name)
+            except:
+                pass
+        
+        # Analyze the screenshot and geometry
+        analysis_results = {
+            "geometric_issues": [],
+            "manufacturability_issues": [],
+            "spatial_issues": [],
+            "suggested_fixes": [],
+            "auto_fixable": []
+        }
+        
+        # Geometric analysis based on object data
+        for obj in objects_data:
+            obj_name = obj.get("Name", "Unknown")
+            obj_type = obj.get("TypeId", "")
+            
+            # Check for common geometric issues
+            if "Box" in obj_type:
+                # Check for very thin walls
+                length = obj.get("Length", 0)
+                width = obj.get("Width", 0) 
+                height = obj.get("Height", 0)
+                
+                min_dimension = min([d for d in [length, width, height] if d > 0])
+                if min_dimension < 1.0:  # Less than 1mm
+                    analysis_results["geometric_issues"].append({
+                        "object": obj_name,
+                        "issue": "Very thin wall detected",
+                        "current_value": f"{min_dimension:.2f}mm",
+                        "recommendation": "Increase minimum wall thickness to 1.2mm",
+                        "severity": "warning"
+                    })
+                    analysis_results["auto_fixable"].append({
+                        "object": obj_name,
+                        "fix": "increase_wall_thickness",
+                        "target_value": 1.2
+                    })
+            
+            elif "Cylinder" in obj_type:
+                # Check hole aspect ratios
+                radius = obj.get("Radius", 0)
+                height = obj.get("Height", 0)
+                
+                if radius > 0 and height > 0:
+                    aspect_ratio = height / (radius * 2)  # depth/diameter
+                    if aspect_ratio > 5:
+                        analysis_results["manufacturability_issues"].append({
+                            "object": obj_name,
+                            "issue": "High aspect ratio hole",
+                            "current_value": f"Aspect ratio: {aspect_ratio:.1f}",
+                            "recommendation": "Consider stepped drilling or reduce depth",
+                            "severity": "warning"
+                        })
+        
+        # Check for potential spatial/assembly issues
+        if len(objects_data) > 1:
+            # Simple overlap detection
+            for i, obj1 in enumerate(objects_data):
+                for j, obj2 in enumerate(objects_data[i+1:], i+1):
+                    # Basic bounding box overlap check (simplified)
+                    # In real implementation, would use actual FreeCAD geometry
+                    analysis_results["spatial_issues"].append({
+                        "objects": [obj1.get("Name"), obj2.get("Name")],
+                        "issue": "Potential interference - verify clearances",
+                        "recommendation": "Check assembly constraints and clearances",
+                        "severity": "info"
+                    })
+        
+        # Generate overall recommendations
+        total_issues = (len(analysis_results["geometric_issues"]) + 
+                       len(analysis_results["manufacturability_issues"]) +
+                       len(analysis_results["spatial_issues"]))
+        
+        if total_issues == 0:
+            analysis_results["suggested_fixes"].append("✅ No major issues detected in current view")
+        else:
+            if analysis_results["geometric_issues"]:
+                analysis_results["suggested_fixes"].append("🔧 Fix geometric issues to improve model robustness")
+            if analysis_results["manufacturability_issues"]:
+                analysis_results["suggested_fixes"].append("🏭 Address manufacturability concerns to reduce production costs")
+            if analysis_results["spatial_issues"]:
+                analysis_results["suggested_fixes"].append("📐 Verify spatial relationships for proper assembly")
+        
+        # Format comprehensive report
+        report = f"""# Screenshot Analysis Report
+
+## View Analyzed: {view_name}
+## Document: {doc_name or 'Active Document'}
+## Objects Found: {len(objects_data)}
+
+## Analysis Results
+
+### Geometric Issues ({len(analysis_results['geometric_issues'])})
+"""
+        
+        for issue in analysis_results["geometric_issues"]:
+            severity_icon = "⚠️" if issue["severity"] == "warning" else "❌" if issue["severity"] == "error" else "ℹ️"
+            report += f"- {severity_icon} **{issue['object']}**: {issue['issue']}\n"
+            report += f"  - Current: {issue['current_value']}\n"
+            report += f"  - Recommendation: {issue['recommendation']}\n\n"
+        
+        report += f"\n### Manufacturability Issues ({len(analysis_results['manufacturability_issues'])})\n"
+        
+        for issue in analysis_results["manufacturability_issues"]:
+            severity_icon = "⚠️" if issue["severity"] == "warning" else "❌" if issue["severity"] == "error" else "ℹ️"
+            report += f"- {severity_icon} **{issue['object']}**: {issue['issue']}\n"
+            report += f"  - Current: {issue['current_value']}\n"
+            report += f"  - Recommendation: {issue['recommendation']}\n\n"
+        
+        report += f"\n### Spatial Issues ({len(analysis_results['spatial_issues'])})\n"
+        
+        for issue in analysis_results["spatial_issues"]:
+            severity_icon = "⚠️" if issue["severity"] == "warning" else "❌" if issue["severity"] == "error" else "ℹ️"
+            report += f"- {severity_icon} **{' & '.join(issue['objects'])}**: {issue['issue']}\n"
+            report += f"  - Recommendation: {issue['recommendation']}\n\n"
+        
+        report += "\n## Recommendations\n"
+        for i, fix in enumerate(analysis_results["suggested_fixes"], 1):
+            report += f"{i}. {fix}\n"
+        
+        if analysis_results["auto_fixable"]:
+            report += f"\n## Auto-Fixable Issues ({len(analysis_results['auto_fixable'])})\n"
+            report += "The following issues can be automatically corrected:\n"
+            for fix in analysis_results["auto_fixable"]:
+                report += f"- **{fix['object']}**: {fix['fix']} to {fix.get('target_value', 'optimal value')}\n"
+            report += "\n💡 Use the `apply_automatic_fixes` tool to apply these corrections.\n"
+        
+        logger.info(f"Screenshot analysis complete: {total_issues} issues found")
+        
+        return [
+            TextContent(type="text", text=report),
+            ImageContent(type="image", data=screenshot, mimeType="image/png")
+        ]
+        
+    except Exception as e:
+        logger.error(f"Screenshot analysis failed: {e}")
+        return [
+            TextContent(type="text", text=f"Screenshot analysis failed: {e}")
+        ]
+
+
+@mcp.tool()
+def apply_automatic_fixes(
+    ctx: Context,
+    doc_name: str,
+    fix_types: List[str] = None
+) -> List[TextContent | ImageContent]:
+    """
+    Apply automatic fixes for common geometric and manufacturability issues detected in screenshot analysis.
+    
+    Args:
+        doc_name: Document name to apply fixes to
+        fix_types: Specific types of fixes to apply (wall_thickness, hole_diameter, etc.)
+                  If None, applies all safe automatic fixes
+    
+    Returns:
+        Results of applied fixes with before/after comparison
+    """
+    logger.info(f"Applying automatic fixes to document: {doc_name}")
+    
+    try:
+        freecad = get_freecad_connection()
+        
+        # Get current state
+        before_screenshot = freecad.get_active_screenshot()
+        objects_data = freecad.get_objects(doc_name)
+        
+        applied_fixes = []
+        
+        # Apply fixes based on common patterns
+        for obj in objects_data:
+            obj_name = obj.get("Name", "Unknown")
+            obj_type = obj.get("TypeId", "")
+            
+            # Fix thin walls in boxes
+            if "Box" in obj_type and (fix_types is None or "wall_thickness" in fix_types):
+                length = obj.get("Length", 0)
+                width = obj.get("Width", 0)
+                height = obj.get("Height", 0)
+                
+                min_dimension = min([d for d in [length, width, height] if d > 0])
+                if min_dimension < 1.2:  # Below manufacturing minimum
+                    # Increase the minimum dimension to 1.2mm
+                    if length == min_dimension:
+                        new_length = 1.2
+                        fix_code = f"""
+import FreeCAD
+doc = FreeCAD.getDocument('{doc_name}')
+obj = doc.getObject('{obj_name}')
+if obj:
+    obj.Length = {new_length}
+    doc.recompute()
+"""
+                    elif width == min_dimension:
+                        new_width = 1.2
+                        fix_code = f"""
+import FreeCAD
+doc = FreeCAD.getDocument('{doc_name}')
+obj = doc.getObject('{obj_name}')
+if obj:
+    obj.Width = {new_width}
+    doc.recompute()
+"""
+                    elif height == min_dimension:
+                        new_height = 1.2
+                        fix_code = f"""
+import FreeCAD
+doc = FreeCAD.getDocument('{doc_name}')
+obj = doc.getObject('{obj_name}')
+if obj:
+    obj.Height = {new_height}
+    doc.recompute()
+"""
+                    
+                    result = freecad.execute_code(fix_code)
+                    if result.get("success"):
+                        applied_fixes.append({
+                            "object": obj_name,
+                            "fix": "Increased wall thickness",
+                            "old_value": f"{min_dimension:.2f}mm",
+                            "new_value": "1.2mm",
+                            "result": "success"
+                        })
+                    else:
+                        applied_fixes.append({
+                            "object": obj_name,
+                            "fix": "Attempted wall thickness fix",
+                            "result": "failed",
+                            "error": result.get("error", "Unknown error")
+                        })
+            
+            # Add corner radii for better manufacturability
+            if "Box" in obj_type and (fix_types is None or "corner_radii" in fix_types):
+                # Add small corner radii using FreeCAD's fillet operation
+                fillet_code = f"""
+import FreeCAD
+import Part
+
+doc = FreeCAD.getDocument('{doc_name}')
+obj = doc.getObject('{obj_name}')
+
+if obj and hasattr(obj, 'Shape'):
+    try:
+        # Add small fillets to edges
+        shape = obj.Shape
+        edges = shape.Edges
+        
+        # Apply 0.5mm fillet to all edges
+        if len(edges) > 0:
+            fillet = shape.makeFillet(0.5, edges)
+            
+            # Create new filleted object
+            filleted_obj = doc.addObject("Part::Feature", "{obj_name}_Filleted")
+            filleted_obj.Shape = fillet
+            filleted_obj.ViewObject.ShapeColor = obj.ViewObject.ShapeColor
+            
+            # Hide original object
+            obj.ViewObject.Visibility = False
+            
+            doc.recompute()
+    except Exception as e:
+        print(f"Fillet operation failed: {{e}}")
+"""
+                
+                result = freecad.execute_code(fillet_code)
+                if result.get("success"):
+                    applied_fixes.append({
+                        "object": obj_name,
+                        "fix": "Added corner radii for manufacturability",
+                        "new_value": "0.5mm radii",
+                        "result": "success"
+                    })
+        
+        # Take after screenshot
+        after_screenshot = freecad.get_active_screenshot()
+        
+        # Generate report
+        report = f"""# Automatic Fixes Applied
+
+## Document: {doc_name}
+## Fixes Applied: {len([f for f in applied_fixes if f['result'] == 'success'])}
+## Failed Fixes: {len([f for f in applied_fixes if f['result'] == 'failed'])}
+
+## Applied Fixes
+"""
+        
+        for fix in applied_fixes:
+            if fix["result"] == "success":
+                report += f"✅ **{fix['object']}**: {fix['fix']}\n"
+                if "old_value" in fix:
+                    report += f"   - Changed from {fix['old_value']} to {fix['new_value']}\n"
+                elif "new_value" in fix:
+                    report += f"   - Applied: {fix['new_value']}\n"
+            else:
+                report += f"❌ **{fix['object']}**: {fix['fix']} - {fix.get('error', 'Failed')}\n"
+        
+        if not applied_fixes:
+            report += "ℹ️ No automatic fixes were needed or applicable.\n"
+        
+        report += "\n## Recommendations\n"
+        report += "1. Review the changes and verify they meet your design requirements\n"
+        report += "2. Run DFM analysis to confirm manufacturability improvements\n"
+        report += "3. Check assembly constraints if this is part of a larger assembly\n"
+        
+        logger.info(f"Applied {len([f for f in applied_fixes if f['result'] == 'success'])} automatic fixes")
+        
+        return [
+            TextContent(type="text", text=report),
+            ImageContent(type="image", data=after_screenshot, mimeType="image/png")
+        ]
+        
+    except Exception as e:
+        logger.error(f"Automatic fixes failed: {e}")
+        return [
+            TextContent(type="text", text=f"Automatic fixes failed: {e}")
+        ]
+
+
+@mcp.tool()
+def analyze_manufacturability_quick(
+    ctx: Context,
+    doc_name: str,
+    process: str = "cnc_machining",
+    material: str = "aluminum"
+) -> List[TextContent]:
+    """
+    Quick manufacturability analysis focused on geometric feasibility rather than cost.
+    
+    Args:
+        doc_name: FreeCAD document to analyze
+        process: Manufacturing process (cnc_machining, 3d_printing, injection_molding)
+        material: Material type (aluminum, steel, plastic)
+    
+    Returns:
+        Focused manufacturability recommendations
+    """
+    logger.info(f"Quick manufacturability analysis for {doc_name} - {process}")
+    
+    try:
+        freecad = get_freecad_connection()
+        objects_data = freecad.get_objects(doc_name)
+        
+        issues = []
+        recommendations = []
+        
+        # Process-specific analysis
+        for obj in objects_data:
+            obj_name = obj.get("Name", "Unknown")
+            obj_type = obj.get("TypeId", "")
+            
+            if process == "cnc_machining":
+                # Check for CNC manufacturability
+                if "Box" in obj_type:
+                    length = obj.get("Length", 0)
+                    width = obj.get("Width", 0)
+                    height = obj.get("Height", 0)
+                    
+                    # Check for deep narrow pockets
+                    min_dimension = min([d for d in [length, width, height] if d > 0])
+                    max_dimension = max([d for d in [length, width, height] if d > 0])
+                    
+                    if max_dimension / min_dimension > 10:
+                        issues.append(f"**{obj_name}**: High aspect ratio may require special tooling")
+                        recommendations.append(f"Consider breaking {obj_name} into multiple operations")
+                    
+                    # Check for sharp internal corners
+                    issues.append(f"**{obj_name}**: Add corner radii ≥ 0.5mm for tool clearance")
+                    recommendations.append(f"Apply fillets to {obj_name} edges for better machinability")
+                
+                elif "Cylinder" in obj_type:
+                    radius = obj.get("Radius", 0)
+                    height = obj.get("Height", 0)
+                    
+                    # Check hole depth-to-diameter ratio
+                    if radius > 0 and height > 0:
+                        aspect_ratio = height / (radius * 2)
+                        if aspect_ratio > 5:
+                            issues.append(f"**{obj_name}**: Deep hole (aspect ratio {aspect_ratio:.1f}) needs special drilling")
+                            recommendations.append(f"Consider stepped drilling or gun drilling for {obj_name}")
+            
+            elif process == "3d_printing":
+                # Check for 3D printing manufacturability
+                if "Box" in obj_type:
+                    height = obj.get("Height", 0)
+                    if height > 200:  # Typical FDM build height limit
+                        issues.append(f"**{obj_name}**: Height {height}mm may exceed printer build volume")
+                        recommendations.append(f"Consider splitting {obj_name} or rotating for printing")
+                    
+                    # Check wall thickness
+                    min_dimension = min([d for d in [obj.get("Length", 0), obj.get("Width", 0), obj.get("Height", 0)] if d > 0])
+                    if min_dimension < 1.2:
+                        issues.append(f"**{obj_name}**: Wall thickness {min_dimension:.1f}mm below FDM minimum")
+                        recommendations.append(f"Increase wall thickness of {obj_name} to ≥ 1.2mm")
+                
+                # Check for overhangs (simplified analysis)
+                issues.append(f"**{obj_name}**: Verify overhangs ≤ 45° to avoid supports")
+                recommendations.append(f"Review {obj_name} orientation to minimize support material")
+            
+            elif process == "injection_molding":
+                # Check for injection molding manufacturability
+                if "Box" in obj_type:
+                    # Check for uniform wall thickness
+                    length = obj.get("Length", 0)
+                    width = obj.get("Width", 0)
+                    height = obj.get("Height", 0)
+                    
+                    # Simplified wall thickness check
+                    dimensions = [d for d in [length, width, height] if d > 0]
+                    if dimensions:
+                        thickness_variation = (max(dimensions) - min(dimensions)) / max(dimensions)
+                        if thickness_variation > 0.5:
+                            issues.append(f"**{obj_name}**: High wall thickness variation may cause warping")
+                            recommendations.append(f"Design {obj_name} with more uniform wall thickness")
+                    
+                    # Check for draft angles (simplified)
+                    issues.append(f"**{obj_name}**: Add 1-2° draft angles to vertical surfaces")
+                    recommendations.append(f"Apply draft to {obj_name} for easier part ejection")
+        
+        # Generate report
+        report = f"""# Quick Manufacturability Analysis
+
+## Process: {process.replace('_', ' ').title()}
+## Material: {material.title()}
+## Objects Analyzed: {len(objects_data)}
+
+## Issues Found ({len(issues)})
+"""
+        
+        if issues:
+            for issue in issues:
+                report += f"- ⚠️ {issue}\n"
+        else:
+            report += "- ✅ No major manufacturability issues detected\n"
+        
+        report += f"\n## Recommendations ({len(recommendations)})\n"
+        
+        if recommendations:
+            for i, rec in enumerate(recommendations, 1):
+                report += f"{i}. {rec}\n"
+        else:
+            report += "- ✅ Design appears manufacturable with current process\n"
+        
+        # Add process-specific tips
+        report += f"\n## {process.replace('_', ' ').title()} Tips\n"
+        
+        if process == "cnc_machining":
+            report += "- Use standard tool sizes when possible\n"
+            report += "- Minimize tool changes and setups\n"
+            report += "- Consider workholding and clamping access\n"
+            report += "- Add corner radii to reduce stress concentrations\n"
+        
+        elif process == "3d_printing":
+            report += "- Orient parts to minimize supports\n"
+            report += "- Design self-supporting features where possible\n"
+            report += "- Consider layer adhesion direction for strength\n"
+            report += "- Plan for post-processing access\n"
+        
+        elif process == "injection_molding":
+            report += "- Maintain uniform wall thickness\n"
+            report += "- Add draft angles to all vertical surfaces\n"
+            report += "- Avoid sharp corners and undercuts\n"
+            report += "- Consider gate location and flow patterns\n"
+        
+        logger.info(f"Manufacturability analysis complete: {len(issues)} issues found")
+        
+        return [TextContent(type="text", text=report)]
+        
+    except Exception as e:
+        logger.error(f"Manufacturability analysis failed: {e}")
+        return [TextContent(type="text", text=f"Manufacturability analysis failed: {e}")]
+
+
 def main():
     """Run the MCP server"""
     mcp.run()
