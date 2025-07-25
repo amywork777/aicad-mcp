@@ -1,15 +1,44 @@
-# Taiyaki AI - FreeCAD Integration
+# Taiyaki AI - Enhanced FreeCAD Integration
 
-Taiyaki AI is a comprehensive FreeCAD integration toolkit that leverages the Model Context Protocol (MCP) to enable advanced programmatic control of 3D modeling operations. This framework provides a powerful API for creating and manipulating 3D models in FreeCAD through structured commands.
+Taiyaki AI is a comprehensive FreeCAD integration toolkit that leverages the Model Context Protocol (MCP) to enable advanced programmatic control of 3D modeling operations. This enhanced framework provides a powerful API for creating and manipulating 3D models in FreeCAD with advanced manufacturing analysis, spatial reasoning, and design validation capabilities.
 
 ## Features
 
+### Core Integration
 - **Advanced API Integration**: Connect FreeCAD to external systems using MCP
 - **Parametric Modeling**: Create customizable geometric models with precise parameters
 - **STEP Export**: Export to industry-standard CAD formats
 - **Automated Server**: Auto-starting RPC server with connection testing
 - **Enhanced User Interface**: Improved workbench experience in FreeCAD
 - **Knowledge Base**: Integrated knowledge base with specialized CAD guidelines and best practices
+
+### Enhanced Manufacturing Framework
+- **Manufacturing Analysis**: Comprehensive material selection and process optimization
+- **Tolerance Calculations**: Advanced fit and tolerance analysis with thermal considerations
+- **Cost Estimation**: Intelligent cost analysis with process-specific parameters
+- **DFM Integration**: Design for Manufacturing checks with actionable recommendations
+- **Multi-Process Support**: CNC machining, 3D printing, injection molding, and more
+
+### Spatial Reasoning & Layout
+- **Physics-Based Constraints**: Collision detection and gravity-aware positioning
+- **Ergonomic Analysis**: Human factors integration for accessible design
+- **Thermal Management**: Heat dissipation and thermal expansion analysis
+- **Assembly Optimization**: Constraint-based spatial layout optimization
+- **Accessibility Validation**: Tool access and maintenance clearance verification
+
+### Advanced CAD Operations
+- **Feature-Based Modeling**: Parametric sketches with geometric constraints
+- **Pattern Generation**: Linear, circular, and path-based pattern creation
+- **Boolean Operations**: Advanced union, subtract, and intersect with manufacturing awareness
+- **Assembly Management**: Multi-component assemblies with constraint validation
+- **Parametric Expressions**: Variable-driven dimensions with dependency tracking
+
+### Design Validation System
+- **Comprehensive Analysis**: Geometry, manufacturing, structural, assembly, and cost validation
+- **Severity Classification**: Critical, error, warning, and info level issue detection
+- **Manufacturing Validation**: Process-specific design rule checking
+- **Structural Analysis**: Stress concentration and load path validation
+- **Cost Optimization**: Target cost validation with optimization recommendations
 
 ## Installation 
 
@@ -31,11 +60,37 @@ The Taiyaki AI toolkit exposes the following API endpoints through MCP:
 * `get_object`: Get an object in a document
 * `get_parts_list`: Get the list of parts in the parts library
 
-### Enhanced Tools
-* `export_step`: Export models to industry-standard STEP format for manufacturing or sharing;    
-* `get_printing_guidelines`: Direct access to detailed 3D printing design guidelines;  
-* `refine_3d_printing_dfm`: Refine a 3D printing design for specific processes (e.g., SLA, SLS) using DFM rules;  
-* `refine_cnc_machining_dfm`: Refine a CNC machining design for specific processes using DFM rules.  
+### Enhanced Manufacturing Tools
+* `export_step`: Export models to industry-standard STEP format for manufacturing or sharing
+* `analyze_manufacturing_requirements`: Comprehensive manufacturing analysis with cost estimates
+* `calculate_fit_and_tolerance`: Advanced fit and tolerance analysis with thermal considerations
+* `optimize_for_manufacturing`: AI-driven manufacturing optimization with process-specific recommendations
+* `validate_design_comprehensive`: Complete design validation across all engineering domains
+
+### Spatial Layout Tools
+* `create_spatial_layout`: Physics-based spatial layout with collision detection and optimization
+* Advanced constraint solving for clearance, accessibility, thermal, and ergonomic requirements
+* Automated layout optimization with multi-objective scoring
+
+### Advanced CAD Tools
+* `create_parametric_feature`: Feature-based modeling with manufacturing integration
+* Parametric sketches with geometric constraints and variable expressions
+* Pattern generation (linear, circular, path-based) with manufacturing awareness
+* Boolean operations with design validation
+
+### Design Validation Tools
+* Multi-domain validation (geometry, manufacturing, structural, assembly, cost)
+* Severity-based issue classification and prioritization
+* Actionable recommendations with cost and time impact analysis
+* Process-specific design rule checking
+
+### Legacy DFM Tools
+* `get_printing_guidelines`: Direct access to detailed 3D printing design guidelines
+* `refine_3d_printing_dfm`: Refine a 3D printing design for specific processes (e.g., SLA, SLS) using DFM rules
+* `refine_cnc_machining_dfm`: Refine a CNC machining design for specific processes using DFM rules
+* `analyze_cnc_manufacturing_dfm`: Visual DFM analysis for CNC machining
+* `analyze_3d_printing_dfm`: Visual DFM analysis for 3D printing
+* `analyze_injection_molding_dfm`: Visual DFM analysis for injection molding  
 
 ## Knowledge Base System
 
@@ -89,9 +144,125 @@ The knowledge base can be accessed through two methods:
 
 ## Usage Examples
 
-### Create a Parametric Box
+### Enhanced Manufacturing Analysis
 
 ```python
+# Comprehensive manufacturing analysis
+analyze_manufacturing_requirements(
+  doc_name="MyPart",
+  material="aluminum_6061",
+  process="cnc_milling",
+  tolerance_grade="IT7",
+  surface_finish=1.6
+)
+
+# Advanced fit and tolerance calculation
+calculate_fit_and_tolerance(
+  nominal_dimension=25.0,
+  fit_type="clearance",
+  tolerance_grade_hole="H7",
+  tolerance_grade_shaft="g6",
+  temperature_range=50.0
+)
+```
+
+### Spatial Layout and Optimization
+
+```python
+# Create optimized spatial layout
+create_spatial_layout(
+  layout_name="motor_assembly",
+  components=[
+    {
+      "name": "motor",
+      "type": "mechanical",
+      "position": [0, 0, 50],
+      "dimensions": [100, 80, 60],
+      "mass": 2.5,
+      "fixed": False
+    },
+    {
+      "name": "controller",
+      "type": "electronic",
+      "position": [150, 0, 30],
+      "dimensions": [80, 60, 20],
+      "heat_generation": 5.0
+    }
+  ],
+  constraints=[
+    {
+      "type": "clearance",
+      "objects": ["motor", "controller"],
+      "min_distance": 20.0,
+      "priority": 3
+    },
+    {
+      "type": "accessibility",
+      "objects": ["controller"],
+      "direction": "top",
+      "distance": 50.0,
+      "priority": 4
+    }
+  ]
+)
+```
+
+### Advanced Parametric Features
+
+```python
+# Create parametric hole with manufacturing integration
+create_parametric_feature(
+  doc_name="MyPart",
+  feature_name="mounting_hole",
+  feature_type="hole",
+  parameters={
+    "position": [10, 20, 0],
+    "diameter": "bolt_diameter * 1.1",  # Parametric expression
+    "depth": 15.0,
+    "hole_type": "precision"
+  }
+)
+
+# Create fillet with manufacturing considerations
+create_parametric_feature(
+  doc_name="MyPart",
+  feature_name="stress_relief",
+  feature_type="fillet",
+  parameters={
+    "edges": ["Box.Edge1", "Box.Edge2"],
+    "radius": "wall_thickness * 0.5"
+  }
+)
+```
+
+### Comprehensive Design Validation
+
+```python
+# Complete design validation
+validate_design_comprehensive(
+  doc_name="MyAssembly",
+  validation_options={
+    "manufacturing_process": "cnc_machining",
+    "target_cost": 150.0,
+    "material": "aluminum_6061",
+    "safety_factor": 2.0,
+    "enable_structural": True,
+    "enable_assembly": True
+  }
+)
+
+# Manufacturing optimization
+optimize_for_manufacturing(
+  doc_name="MyPart",
+  process="cnc_machining",
+  optimization_goals=["cost", "time", "quality"]
+)
+```
+
+### Legacy Examples
+
+```python
+# Create a Parametric Box (legacy)
 create_parametric_model(
   doc_name="MyModel",
   model_type="box",
@@ -103,24 +274,17 @@ create_parametric_model(
     "position": {"x": 0, "y": 0, "z": 0}
   }
 )
-```
 
-### Export a Model to STEP
-
-```python
+# Export a Model to STEP
 export_step(
   doc_name="MyModel",
   file_name="my_exported_model.step",
   export_to="desktop"
 )
-```
 
-### Get Gudelines
-
-```python
-# Get all 3D printing guidelines
+# Get Guidelines (legacy)
 guidelines_3d_prompt = get_3d_printing_guidelines_prompt()
-gudelines_cnc_prompt = get_cnc_machining_guidelines_prompt()
+guidelines_cnc_prompt = get_cnc_machining_guidelines_prompt()
 
 # Get specific DFM information
 result = refine_3d_printing_dfm(
@@ -131,9 +295,76 @@ result = refine_3d_printing_dfm(
 result = refine_cnc_machining_dfm(
    features=["Standard Tolerance"]
 )
-
 ```
+
+## Enhanced Architecture
+
+The enhanced Taiyaki AI system is built on four core frameworks that work together to provide comprehensive CAD and manufacturing capabilities:
+
+### Manufacturing Framework (`manufacturing_framework.py`)
+- **Material Database**: Comprehensive material properties including mechanical, thermal, and cost data
+- **Process Library**: Manufacturing process definitions with constraints and capabilities
+- **Tolerance Engine**: ISO-standard tolerance calculations with fit analysis
+- **Cost Estimation**: Process-specific cost modeling with time and material factors
+- **DFM Integration**: Design for Manufacturing rule checking and optimization
+
+### Spatial Framework (`enhanced_spatial_framework.py`)
+- **Physics-Based Layout**: Collision detection with bounding box optimization
+- **Constraint Solver**: Multi-objective constraint satisfaction for spatial relationships
+- **Ergonomic Analysis**: Human factors integration for accessibility and usability
+- **Thermal Management**: Heat dissipation modeling and thermal expansion analysis
+- **Assembly Optimization**: Automated layout optimization with configurable priorities
+
+### CAD Operations Framework (`advanced_cad_operations.py`)
+- **Parametric Modeling**: Variable-driven features with dependency tracking
+- **Sketch Engine**: Geometric constraint solving for 2D sketches
+- **Feature Library**: Extrude, revolve, fillet, pattern, and boolean operations
+- **Assembly Management**: Multi-component assemblies with constraint validation
+- **Manufacturing Integration**: Feature-level DFM analysis and recommendations
+
+### Design Validation System (`design_validation_system.py`)
+- **Multi-Domain Validation**: Geometry, manufacturing, structural, assembly, and cost analysis
+- **Severity Classification**: Critical, error, warning, and info level issue categorization
+- **Rule Engine**: Extensible validation rules with configurable parameters
+- **Impact Analysis**: Cost and time impact estimation for identified issues
+- **Recommendation Engine**: Actionable improvement suggestions with priority ranking
+
+## Server Architecture
+
+The system provides two server implementations:
+
+1. **Standard Server** (`server.py`): Original FreeCAD MCP integration with DFM capabilities
+2. **Enhanced Server** (`enhanced_server.py`): Advanced server with all four frameworks integrated
+
+Both servers maintain backward compatibility while the enhanced server provides additional advanced capabilities.
 
 ## Configuration
 
 Configure the appropriate MCP client to connect to the Taiyaki AI server. The server exposes a standard MCP interface at port 8000 by default.
+
+### Enhanced Server Configuration
+
+To use the enhanced capabilities, ensure your MCP client points to the enhanced server:
+
+```json
+{
+  "mcpServers": {
+    "taiyaki-ai-enhanced": {
+      "command": "python",
+      "args": ["-m", "freecad_mcp.enhanced_server"],
+      "env": {
+        "FREECAD_PATH": "/path/to/freecad"
+      }
+    }
+  }
+}
+```
+
+### Framework Initialization
+
+The enhanced server automatically initializes all frameworks with standard materials and processes:
+
+- **Materials**: Aluminum 6061, Steel (mild), PLA, ABS
+- **Processes**: CNC milling, FDM printing, injection molding
+- **Tolerances**: ISO standard grades (IT6-IT12)
+- **Validation Rules**: Comprehensive rule set for all categories
