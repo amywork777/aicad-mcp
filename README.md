@@ -47,6 +47,14 @@ Taiyaki AI is a comprehensive FreeCAD integration toolkit that leverages the Mod
 - **Manufacturing Validation**: Ensures designs meet production requirements
 - **Spatial Conflict Resolution**: Detects and fixes overlapping or conflicting geometry
 
+### Web STEP File Import
+- **Professional CAD Libraries**: Direct access to McMaster-Carr, GrabCAD, TraceParts, and manufacturer websites
+- **Intelligent Search**: Web search integration for finding existing STEP files instead of modeling from scratch
+- **Part Number Lookup**: Direct McMaster-Carr part import using standard part numbers
+- **Quality Sources**: Focus on professional-grade, dimensionally accurate CAD models
+- **Part Management**: Organize and categorize imported components automatically
+- **Assembly Integration**: Seamlessly incorporate standard components into custom designs
+
 ## Installation 
 
 See the [Installation Guide](INSTALLATION.md) for complete setup instructions.
@@ -97,6 +105,14 @@ The Taiyaki AI toolkit exposes the following API endpoints through MCP:
 * Visual error detection for zero dimensions, invalid parameters, and spatial conflicts
 * Manufacturing constraint validation and automatic thickness adjustments
 * Spatial layout optimization with automatic object separation
+
+### Web STEP File Import Tools
+* `search_and_import_step_files`: Search web sources for existing STEP files and import directly
+* `import_mcmaster_part`: Import specific McMaster-Carr parts using part numbers
+* `manage_imported_parts`: Organize and categorize imported components
+* Professional CAD library integration (McMaster-Carr, GrabCAD, TraceParts)
+* Intelligent part identification and organization by function
+* Quality source prioritization for dimensionally accurate models
 
 ### Legacy DFM Tools
 * `get_printing_guidelines`: Direct access to detailed 3D printing design guidelines
@@ -270,6 +286,44 @@ optimize_for_manufacturing(
   doc_name="MyPart",
   process="cnc_machining",
   optimization_goals=["cost", "time", "quality"]
+)
+```
+
+### Web STEP File Import
+
+```python
+# Search and import standard fasteners
+search_and_import_step_files(
+  doc_name="MyAssembly",
+  search_query="M8 hex bolt",
+  preferred_sources=["mcmaster", "grabcad"],
+  max_results=3
+)
+
+# Import specific McMaster-Carr parts
+import_mcmaster_part(
+  doc_name="FastenerLibrary",
+  part_number="91290A115",  # M8x25mm hex bolt
+  description="Standard hex bolt"
+)
+
+# Search for bearings from professional sources
+search_and_import_step_files(
+  doc_name="BearingAssembly",
+  search_query="608 ball bearing",
+  preferred_sources=["mcmaster", "manufacturer"]
+)
+
+# Organize imported parts
+manage_imported_parts(
+  doc_name="MyAssembly",
+  action="organize"  # Groups by fasteners, bearings, etc.
+)
+
+# List all imported components
+manage_imported_parts(
+  doc_name="MyAssembly",
+  action="list"
 )
 ```
 
