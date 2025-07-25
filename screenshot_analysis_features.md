@@ -19,12 +19,12 @@ analyze_screenshot_for_issues(doc_name="MyDesign", analysis_type="manufacturabil
 ```
 
 **Detects:**
-- Zero or negative dimensions
+- Zero or negative dimensions in boxes, cylinders, spheres, cones
 - Invalid geometric parameters
-- Overlapping objects
+- Overlapping objects at identical locations
 - Thin features that are difficult to manufacture
 - High aspect ratios causing structural issues
-- Objects at identical locations
+- Small radii that are difficult to machine
 
 ### 2. Automatic Fix Tool (`apply_automatic_fixes`)
 
@@ -43,10 +43,10 @@ apply_automatic_fixes(doc_name="MyDesign", fix_type="manufacturability")
 ```
 
 **Fixes:**
-- Sets positive dimensions for invalid objects
+- Sets positive dimensions for invalid objects (boxes, cylinders, spheres, cones)
 - Increases thickness of thin features to minimum machinable size (1.5mm)
+- Increases radii to minimum machinable size (0.5mm)
 - Separates overlapping objects by moving them apart
-- Validates cylinder parameters
 - Creates backups of original objects before modifications
 
 ## Workflow Integration
@@ -56,7 +56,7 @@ apply_automatic_fixes(doc_name="MyDesign", fix_type="manufacturability")
 1. **Create your CAD design** using existing FreeCAD MCP tools
 2. **Take screenshot and analyze**:
    ```python
-   analyze_screenshot_for_issues(doc_name="WrenchDesign", analysis_type="all")
+   analyze_screenshot_for_issues(doc_name="MyDesign", analysis_type="all")
    ```
 
 3. **Review the analysis report** which shows:
@@ -67,7 +67,7 @@ apply_automatic_fixes(doc_name="MyDesign", fix_type="manufacturability")
 
 4. **Apply automatic fixes**:
    ```python
-   apply_automatic_fixes(doc_name="WrenchDesign", fix_type="all", preserve_original=True)
+   apply_automatic_fixes(doc_name="MyDesign", fix_type="all", preserve_original=True)
    ```
 
 5. **Verify results** by taking another screenshot and running manufacturability analysis
@@ -137,4 +137,4 @@ def validate_and_fix_design(doc_name: str):
     }
 ```
 
-This enhancement makes your FreeCAD MCP server much more robust and helps prevent the types of errors you were experiencing with wrench design and other CAD operations.
+This enhancement makes your FreeCAD MCP server much more robust and helps prevent common CAD design errors across all types of projects.
