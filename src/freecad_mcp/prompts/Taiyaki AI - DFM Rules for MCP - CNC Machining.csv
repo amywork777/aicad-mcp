@@ -1,0 +1,12 @@
+Feature,Description,Process,Value
+Standard Tolerance,The allowable variation in a manufactured part’s dimensions compared to its specified measurements,CNC Machining,±0.005 in
+Extensive Machining,"The high amount of material removal, multiple operations, or tight tolerances, making the job more complex, time-consuming, and costly.",CNC Machining,To consider the percentage of removed material
+Wall Thickness,The thickness of the walls,CNC Machining,"3:1 width-to-height ratio; max height 2.007 in, min width 0.02 in"
+Internal Corner Radius,The rounded shape of inside corners on a part,CNC Machining,To consider rounded corners
+Hole Diameter,The diameter of the holes,CNC Machining,Machining guidelines; Depth < 3x Radius; No partial holes
+Thread Placement,The location and orientation of internal or external threads on a part,CNC Machining,Machining guidelines
+Deep Features,The geometrical elements hat have a large depth compared to their width or diameter,CNC Machining,Depth to less than 6x the feature width
+Internal Vertical Edges,"The upright, 90-degree edges found inside a part’s geometry",CNC Machining,"Radius > 1/3x Depth, no radius for the floor corner; Fillets over chamfers"
+Internal Cavities,The hollow or recessed areas cut into the interior of a part,CNC Machining,"Length < 4x Depth; Depth < 15x Diameter (plastic), < 10x Diameter (aluminium), < 5x Diameter (steel)"
+Feature Size,The dimensions of individual geometric elements,CNC Machining,"Height < 4x Width, avoid long thin elements"
+Surface,The outer face or boundary of a machined part,CNC Machining,To avoid non-planar and draft angle surfaces

@@ -1,0 +1,29 @@
+Feature,Description,Process,Value
+Wall Thickness,The thickness of the plastic walls throughout an injection-molded part,Injection-Molding (in general),"Non-uniform, varies based on material selection"
+Wall Thickness,The thickness of the plastic walls throughout an injection-molded part,LSR,0.012 in - 0.015 in
+Layer Transitions,"The variations in wall thickness or structural steps within a part where one ""layer"" or section changes to another",Injection-Molding (in general),Use fillets or chamfers; avoid sharp edges
+Layer Transitions,"The variations in wall thickness or structural steps within a part where one ""layer"" or section changes to another",LSR,
+Corners,The angles where two surfaces or walls meet,Injection-Molding (in general),Rounded with consistent width
+Corners,The angles where two surfaces or walls meet,LSR,
+Draft,The slight taper or angle applied to the vertical walls of a part to make it easier to remove from the mold.,Injection-Molding (in general),1.5° draft per 0.001 in of textured depth
+Draft,The slight taper or angle applied to the vertical walls of a part to make it easier to remove from the mold.,LSR,
+Undercuts,"The feature that prevents a part from being ejected straight out of the mold because it hooks, locks, or overlaps with part of the mold.",Injection-Molding (in general),Eliminate if possible
+Undercuts,"The feature that prevents a part from being ejected straight out of the mold because it hooks, locks, or overlaps with part of the mold.",LSR,
+Maximum size,The maximum size,Injection-Molding (in general),
+Maximum size,The maximum size,LSR,"11.968 in x 7.992 in x 3.937 in, depth < 2 in from any parting line"
+Ribs - Wall Thickness,The thickness of wall-like features added to a part to increase strength and stiffness without adding much material.,Injection-Molding (in general),50-60% of nominal wall thickness
+Ribs - Wall Thickness,The thickness of wall-like features added to a part to increase strength and stiffness without adding much material.,LSR,0.5x - 1x of the adjacent wall thickness
+Ribs - Fillets,The rounded transitions (curves) between a rib and the main wall of a part.,Injection-Molding (in general),"Radius of 0.25T-0.5T (T = nominal wall thickness), max 0.010 in"
+Ribs - Fillets,The rounded transitions (curves) between a rib and the main wall of a part.,LSR,
+Ribs - Height,The vertical distance from the base of the rib to its top,Injection-Molding (in general),"Rib height ≤ 2.5T (T = nominal wall thickness), multiple shorter ribs if needed"
+Ribs - Height,The vertical distance from the base of the rib to its top,LSR,
+Ribs - Draft,The slight angle added to the vertical walls of a rib,Injection-Molding (in general),Apply at least 0.5° per side
+Ribs - Draft,The slight angle added to the vertical walls of a rib,LSR,
+Boss - Location,"The location of raised features used for attaching components, like screws or fasteners",Injection-Molding (in general),"Place where structural integrity is needed (e.g., screw slots)"
+Boss - Location,"The location of raised features used for attaching components, like screws or fasteners",LSR,
+Boss - Diameter,"The diameter of raised features used for attaching components, like screws or fasteners",Injection-Molding (in general),Not too small to avoid shrinkage
+Boss - Diameter,"The diameter of raised features used for attaching components, like screws or fasteners",LSR,
+Boss - Thickness,"The thickness of raised features used for attaching components, like screws or fasteners",Injection-Molding (in general),Boss thickness ≤ 60% of wall thickness
+Boss - Thickness,"The thickness of raised features used for attaching components, like screws or fasteners",LSR,
+Boss - Walls,"The walls of raised features used for attaching components, like screws or fasteners",Injection-Molding (in general),Proper alignment with walls for attachment
+Boss - Walls,"The walls of raised features used for attaching components, like screws or fasteners",LSR,

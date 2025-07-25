@@ -1,0 +1,119 @@
+Feature,Description,Process,Resolution,Value
+Layer Thickness,The height of each individual layer,DMLS,,0.00079 - 0.00263 in
+Layer Thickness,The height of each individual layer,SLA,Normal,0.004 in
+Layer Thickness,The height of each individual layer,SLA,High,
+Layer Thickness,The height of each individual layer,SLA,Micro,0.0025 in
+Layer Thickness,The height of each individual layer,SLS,,0.004 in
+Layer Thickness,The height of each individual layer,MJF,,0.00315 in
+Layer Thickness,The height of each individual layer,Carbon DLS,,0.004 in
+Layer Thickness,The height of each individual layer,PolyJet,,0.00118 in
+Layer Thickness,The height of each individual layer,FDM (Industrial),,0.004 - 0.012 in
+Layer Thickness,The height of each individual layer,FMD (in-house),,0.004 - 0.012 in
+Layer Thickness,The height of each individual layer,Material Jetting,,
+Layer Thickness,The height of each individual layer,Binder Jetting,,
+Minimum Feature Size,"The smallest physical dimension of a detail, structure, or geometry that can be accurately produced",DMLS,Normal,0.012 in
+Minimum Feature Size,"The smallest physical dimension of a detail, structure, or geometry that can be accurately produced",DMLS,High,0.006 in
+Minimum Feature Size,"The smallest physical dimension of a detail, structure, or geometry that can be accurately produced",SLA,Normal,0.010 in
+Minimum Feature Size,"The smallest physical dimension of a detail, structure, or geometry that can be accurately produced",SLA,High,0.005 in
+Minimum Feature Size,"The smallest physical dimension of a detail, structure, or geometry that can be accurately produced",SLA,Micro,0.0025 in
+Minimum Feature Size,"The smallest physical dimension of a detail, structure, or geometry that can be accurately produced",SLS,,0.030 in
+Minimum Feature Size,"The smallest physical dimension of a detail, structure, or geometry that can be accurately produced",MJF,,0.020 in
+Minimum Feature Size,"The smallest physical dimension of a detail, structure, or geometry that can be accurately produced",Carbon DLS,,0.020 in
+Minimum Feature Size,"The smallest physical dimension of a detail, structure, or geometry that can be accurately produced",PolyJet,,0.012 in
+Minimum Feature Size,"The smallest physical dimension of a detail, structure, or geometry that can be accurately produced",FDM (Industrial),,0.00787 in
+Minimum Feature Size,"The smallest physical dimension of a detail, structure, or geometry that can be accurately produced",FMD (in-house),,0.00787 in
+Minimum Feature Size,"The smallest physical dimension of a detail, structure, or geometry that can be accurately produced",Material Jetting,,0.019 in
+Minimum Feature Size,"The smallest physical dimension of a detail, structure, or geometry that can be accurately produced",Binder Jetting,,0.019 in
+Tolerances,"The acceptable amount of variation or deviation in the size, shape, or position",DMLS,,±0.003 in
+Tolerances,"The acceptable amount of variation or deviation in the size, shape, or position",SLA,,±0.002 in
+Tolerances,"The acceptable amount of variation or deviation in the size, shape, or position",SLS,,±0.010 in
+Tolerances,"The acceptable amount of variation or deviation in the size, shape, or position",MJF,,±0.012 in
+Tolerances,"The acceptable amount of variation or deviation in the size, shape, or position",Carbon DLS,,±0.010 in
+Tolerances,"The acceptable amount of variation or deviation in the size, shape, or position",PolyJet,,±0.005 in
+Tolerances,"The acceptable amount of variation or deviation in the size, shape, or position",FDM (Industrial),,±0.25% with a lower limit of ±0.010 in
+Tolerances,"The acceptable amount of variation or deviation in the size, shape, or position",FMD (in-house),,±0.5% with a lower limit of ±0.020 in
+Tolerances,"The acceptable amount of variation or deviation in the size, shape, or position",Material Jetting,,0.039 in
+Tolerances,"The acceptable amount of variation or deviation in the size, shape, or position",Binder Jetting,,0.039 in
+Minimum Wall Thickness,"The size of the thinnest wall that can be structurally reliable and printable without breaking, warping, or failing to print",DMLS,,
+Minimum Wall Thickness,"The size of the thinnest wall that can be structurally reliable and printable without breaking, warping, or failing to print",SLA,Normal,0.016 in
+Minimum Wall Thickness,"The size of the thinnest wall that can be structurally reliable and printable without breaking, warping, or failing to print",SLA,High,0.016 in
+Minimum Wall Thickness,"The size of the thinnest wall that can be structurally reliable and printable without breaking, warping, or failing to print",SLA,Micro,0.008 in
+Minimum Wall Thickness,"The size of the thinnest wall that can be structurally reliable and printable without breaking, warping, or failing to print",SLS,,0.030 in
+Minimum Wall Thickness,"The size of the thinnest wall that can be structurally reliable and printable without breaking, warping, or failing to print",MJF,,0.020 in
+Minimum Wall Thickness,"The size of the thinnest wall that can be structurally reliable and printable without breaking, warping, or failing to print",Carbon DLS,,0.040 in - 0.125 in
+Minimum Wall Thickness,"The size of the thinnest wall that can be structurally reliable and printable without breaking, warping, or failing to print",PolyJet,,
+Minimum Wall Thickness,"The size of the thinnest wall that can be structurally reliable and printable without breaking, warping, or failing to print",FDM (Industrial),,0.031 in
+Minimum Wall Thickness,"The size of the thinnest wall that can be structurally reliable and printable without breaking, warping, or failing to print",FMD (in-house),,0.031 in
+Minimum Wall Thickness,"The size of the thinnest wall that can be structurally reliable and printable without breaking, warping, or failing to print",Material Jetting,,0.039 in
+Minimum Wall Thickness,"The size of the thinnest wall that can be structurally reliable and printable without breaking, warping, or failing to print",Binder Jetting,,0.078 in
+Minimum Hole Diameter (Negative Spaces),The smallest diameter of a hole or gap that can be printed cleanly and accurately,DMLS,Normal,0.025 in
+Minimum Hole Diameter (Negative Spaces),The smallest diameter of a hole or gap that can be printed cleanly and accurately,SLA,Normal,0.020 in
+Minimum Hole Diameter (Negative Spaces),The smallest diameter of a hole or gap that can be printed cleanly and accurately,SLA,High,0.020 in
+Minimum Hole Diameter (Negative Spaces),The smallest diameter of a hole or gap that can be printed cleanly and accurately,SLS,,0.030 in
+Minimum Hole Diameter (Negative Spaces),The smallest diameter of a hole or gap that can be printed cleanly and accurately,MJF,,0.030 in
+Minimum Hole Diameter (Negative Spaces),The smallest diameter of a hole or gap that can be printed cleanly and accurately,Carbon DLS,,0.025 in
+Minimum Hole Diameter (Negative Spaces),The smallest diameter of a hole or gap that can be printed cleanly and accurately,PolyJet,,
+Minimum Hole Diameter (Negative Spaces),The smallest diameter of a hole or gap that can be printed cleanly and accurately,FDM (Industrial),,0.078 in
+Minimum Hole Diameter (Negative Spaces),The smallest diameter of a hole or gap that can be printed cleanly and accurately,FMD (in-house),,0.078 in
+Minimum Hole Diameter (Negative Spaces),The smallest diameter of a hole or gap that can be printed cleanly and accurately,Material Jetting,,0.019 in
+Minimum Hole Diameter (Negative Spaces),The smallest diameter of a hole or gap that can be printed cleanly and accurately,Binder Jetting,,0.019 in
+Overhangs,Part of the model that extends outward without direct support underneath,DMLS,,Overhangs > 0.020 in need support
+Overhangs,Part of the model that extends outward without direct support underneath,SLA,,
+Overhangs,Part of the model that extends outward without direct support underneath,SLS,,
+Overhangs,Part of the model that extends outward without direct support underneath,MJF,,
+Overhangs,Part of the model that extends outward without direct support underneath,Carbon DLS,,
+Overhangs,Part of the model that extends outward without direct support underneath,PolyJet,,
+Overhangs,Part of the model that extends outward without direct support underneath,FDM (Industrial),,45°
+Overhangs,Part of the model that extends outward without direct support underneath,FMD (in-house),,45°
+Overhangs,Part of the model that extends outward without direct support underneath,Material Jetting,,
+Overhangs,Part of the model that extends outward without direct support underneath,Binder Jetting,,
+Unsupported walls,"Thin, vertical features or panels that lack sufficient connection or support to the rest of the model",DMLS,,0.019 in
+Unsupported walls,"Thin, vertical features or panels that lack sufficient connection or support to the rest of the model",SLA,,0.039 in
+Unsupported walls,"Thin, vertical features or panels that lack sufficient connection or support to the rest of the model",SLS,,
+Unsupported walls,"Thin, vertical features or panels that lack sufficient connection or support to the rest of the model",MJF,,
+Unsupported walls,"Thin, vertical features or panels that lack sufficient connection or support to the rest of the model",Carbon DLS,,
+Unsupported walls,"Thin, vertical features or panels that lack sufficient connection or support to the rest of the model",PolyJet,,
+Unsupported walls,"Thin, vertical features or panels that lack sufficient connection or support to the rest of the model",FDM (Industrial),,0.031 in
+Unsupported walls,"Thin, vertical features or panels that lack sufficient connection or support to the rest of the model",FMD (in-house),,0.031 in
+Unsupported walls,"Thin, vertical features or panels that lack sufficient connection or support to the rest of the model",Material Jetting,,0.039 in
+Unsupported walls,"Thin, vertical features or panels that lack sufficient connection or support to the rest of the model",Binder Jetting,,0.118 in
+Engraved details,"The recessed or sunken features on the surface of a part — like text, logos, symbols, or patterns that are carved into the model rather than raised above it.",DMLS,,0.004 in
+Engraved details,"The recessed or sunken features on the surface of a part — like text, logos, symbols, or patterns that are carved into the model rather than raised above it.",SLA,,0.015 in
+Engraved details,"The recessed or sunken features on the surface of a part — like text, logos, symbols, or patterns that are carved into the model rather than raised above it.",SLS,,0.039 in
+Engraved details,"The recessed or sunken features on the surface of a part — like text, logos, symbols, or patterns that are carved into the model rather than raised above it.",MJF,,0.039 in
+Engraved details,"The recessed or sunken features on the surface of a part — like text, logos, symbols, or patterns that are carved into the model rather than raised above it.",Carbon DLS,,
+Engraved details,"The recessed or sunken features on the surface of a part — like text, logos, symbols, or patterns that are carved into the model rather than raised above it.",PolyJet,,
+Engraved details,"The recessed or sunken features on the surface of a part — like text, logos, symbols, or patterns that are carved into the model rather than raised above it.",FDM (Industrial),,0.023 in wide & 0.078 in high
+Engraved details,"The recessed or sunken features on the surface of a part — like text, logos, symbols, or patterns that are carved into the model rather than raised above it.",FMD (in-house),,
+Engraved details,"The recessed or sunken features on the surface of a part — like text, logos, symbols, or patterns that are carved into the model rather than raised above it.",Material Jetting,,0.019 in
+Engraved details,"The recessed or sunken features on the surface of a part — like text, logos, symbols, or patterns that are carved into the model rather than raised above it.",Binder Jetting,,0.019 in
+Horizontal bridges,"The flat, horizontal span of material that connects two points without any support underneath ",DMLS,,0.078 in
+Horizontal bridges,"The flat, horizontal span of material that connects two points without any support underneath ",SLA,,
+Horizontal bridges,"The flat, horizontal span of material that connects two points without any support underneath ",SLS,,
+Horizontal bridges,"The flat, horizontal span of material that connects two points without any support underneath ",MJF,,
+Horizontal bridges,"The flat, horizontal span of material that connects two points without any support underneath ",Carbon DLS,,
+Horizontal bridges,"The flat, horizontal span of material that connects two points without any support underneath ",PolyJet,,
+Horizontal bridges,"The flat, horizontal span of material that connects two points without any support underneath ",FDM (Industrial),,0.393 in
+Horizontal bridges,"The flat, horizontal span of material that connects two points without any support underneath ",FMD (in-house),,0.393 in
+Horizontal bridges,"The flat, horizontal span of material that connects two points without any support underneath ",Material Jetting,,
+Horizontal bridges,"The flat, horizontal span of material that connects two points without any support underneath ",Binder Jetting,,
+Moving Parts,The components within a single printed object that are designed to move relative to each other,DMLS,,
+Moving Parts,The components within a single printed object that are designed to move relative to each other,SLA,,0.019 in
+Moving Parts,The components within a single printed object that are designed to move relative to each other,SLS,,0.011 in for moving parts & 0.004 in for connections
+Moving Parts,The components within a single printed object that are designed to move relative to each other,MJF,,
+Moving Parts,The components within a single printed object that are designed to move relative to each other,Carbon DLS,,
+Moving Parts,The components within a single printed object that are designed to move relative to each other,PolyJet,,
+Moving Parts,The components within a single printed object that are designed to move relative to each other,FDM (Industrial),,0.019 in
+Moving Parts,The components within a single printed object that are designed to move relative to each other,FMD (in-house),,0.019 in
+Moving Parts,The components within a single printed object that are designed to move relative to each other,Material Jetting,,0.008 in
+Moving Parts,The components within a single printed object that are designed to move relative to each other,Binder Jetting,,0.008 in
+Escape Holes,The purposeful openings added to a model to allow trapped material (like liquid resin or unsintered powder) to drain or escape from internal cavities.,DMLS,,0.196 in
+Escape Holes,The purposeful openings added to a model to allow trapped material (like liquid resin or unsintered powder) to drain or escape from internal cavities.,SLA,,0.157 in
+Escape Holes,The purposeful openings added to a model to allow trapped material (like liquid resin or unsintered powder) to drain or escape from internal cavities.,SLS,,0.196 in
+Escape Holes,The purposeful openings added to a model to allow trapped material (like liquid resin or unsintered powder) to drain or escape from internal cavities.,MJF,,0.196 in
+Escape Holes,The purposeful openings added to a model to allow trapped material (like liquid resin or unsintered powder) to drain or escape from internal cavities.,Carbon DLS,,
+Escape Holes,The purposeful openings added to a model to allow trapped material (like liquid resin or unsintered powder) to drain or escape from internal cavities.,PolyJet,,
+Escape Holes,The purposeful openings added to a model to allow trapped material (like liquid resin or unsintered powder) to drain or escape from internal cavities.,FDM (Industrial),,
+Escape Holes,The purposeful openings added to a model to allow trapped material (like liquid resin or unsintered powder) to drain or escape from internal cavities.,FMD (in-house),,
+Escape Holes,The purposeful openings added to a model to allow trapped material (like liquid resin or unsintered powder) to drain or escape from internal cavities.,Material Jetting,,
+Escape Holes,The purposeful openings added to a model to allow trapped material (like liquid resin or unsintered powder) to drain or escape from internal cavities.,Binder Jetting,,
